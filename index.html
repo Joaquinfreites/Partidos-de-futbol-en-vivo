@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIFA Live Tracker - Marcadores Reales en Tiempo Real</title>
+    <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background glow elements -->
+    <div class="glow-bg glow-1"></div>
+    <div class="glow-bg glow-2"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i data-lucide="trophy"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>FÚTBOL <span>REALTIME</span></h1>
+                    <p>Conectado a ESPN API</p>
+                </div>
+            </div>
+            
+            <div class="header-status">
+                <div class="live-pulse-container" id="api-status-badge">
+                    <span class="pulse-dot"></span>
+                    <span class="status-text" id="api-status-text">CARGANDO ESPN API...</span>
+                </div>
+                <div class="time-display" id="current-time">00:00:00</div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Layout -->
+        <main class="dashboard-grid">
+            
+            <!-- Left Side: Featured Live Match (Main view) -->
+            <section class="featured-match-section">
+                <!-- Main Match Card -->
+                <div class="card glass-card main-match-card">
+                    <div class="card-header">
+                        <span class="league-badge"><i data-lucide="globe"></i> <span id="featured-league">FÚTBOL INTERNACIONAL</span></span>
+                        <span class="live-badge" id="featured-match-time">ESPERANDO</span>
+                    </div>
+
+                    <!-- Scoreboard -->
+                    <div class="scoreboard-container">
+                        <!-- Home Team -->
+                        <div class="team-display home">
+                            <div class="flag-wrapper" id="featured-home-logo-container">
+                                <div class="logo-placeholder"></div>
+                            </div>
+                            <h2 class="team-name" id="featured-home-name">Cargando...</h2>
+                        </div>
+
+                        <!-- Central Score -->
+                        <div class="score-center">
+                            <span class="score-value" id="featured-home-score">-</span>
+                            <span class="score-divider">:</span>
+                            <span class="score-value" id="featured-away-score">-</span>
+                        </div>
+
+                        <!-- Away Team -->
+                        <div class="team-display away">
+                            <div class="flag-wrapper" id="featured-away-logo-container">
+                                <div class="logo-placeholder"></div>
+                            </div>
+                            <h2 class="team-name" id="featured-away-name">Cargando...</h2>
+                        </div>
+                    </div>
+
+                    <!-- Live Event / Match Highlights Ticker -->
+                    <div class="live-ticker-container">
+                        <div class="ticker-label">ÚLTIMO REGISTRO:</div>
+                        <div class="ticker-content" id="latest-event-ticker">
+                            <i data-lucide="info" class="event-icon secondary-text"></i>
+                            <span class="event-text">Conectando con el servidor deportivo...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Match Details Tabs / Stats & Timeline -->
+                <div class="details-container">
+                    <!-- Tabs -->
+                    <div class="tabs-header">
+                        <button class="tab-btn active" data-tab="stats"><i data-lucide="bar-chart-2"></i> Estadísticas</button>
+                        <button class="tab-btn" data-tab="timeline"><i data-lucide="clock"></i> Cronología</button>
+                        <button class="tab-btn" data-tab="lineups"><i data-lucide="users"></i> Líderes / Plantel</button>
+                    </div>
+
+                    <!-- Tab Content: Stats -->
+                    <div class="tab-content active" id="tab-stats">
+                        <div class="stats-list" id="stats-view-content">
+                            <!-- Stat Item: Possession -->
+                            <div class="stat-item">
+                                <div class="stat-labels">
+                                    <span id="stat-home-possession">50%</span>
+                                    <span>Posesión de Balón</span>
+                                    <span id="stat-away-possession">50%</span>
+                                </div>
+                                <div class="stat-bar-container">
+                                    <div class="stat-bar-fill home-fill" id="bar-home-possession" style="width: 50%"></div>
+                                    <div class="stat-bar-fill away-fill" id="bar-away-possession" style="width: 50%"></div>
+                                </div>
+                            </div>
+                            <!-- Stat Item: Shots -->
+                            <div class="stat-item">
+                                <div class="stat-labels">
+                                    <span id="stat-home-shots">0</span>
+                                    <span>Tiros Totales</span>
+                                    <span id="stat-away-shots">0</span>
+                                </div>
+                                <div class="stat-bar-container">
+                                    <div class="stat-bar-fill home-fill" id="bar-home-shots" style="width: 50%"></div>
+                                    <div class="stat-bar-fill away-fill" id="bar-away-shots" style="width: 50%"></div>
+                                </div>
+                            </div>
+                            <!-- Stat Item: Fouls -->
+                            <div class="stat-item">
+                                <div class="stat-labels">
+                                    <span id="stat-home-fouls">0</span>
+                                    <span>Faltas Cometidas</span>
+                                    <span id="stat-away-fouls">0</span>
+                                </div>
+                                <div class="stat-bar-container">
+                                    <div class="stat-bar-fill home-fill" id="bar-home-fouls" style="width: 50%"></div>
+                                    <div class="stat-bar-fill away-fill" id="bar-away-fouls" style="width: 50%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content: Timeline -->
+                    <div class="tab-content" id="tab-timeline">
+                        <div class="timeline-container" id="match-timeline">
+                            <div class="timeline-event">
+                                <span class="event-time">--</span>
+                                <div class="event-details">
+                                    <span class="event-title">Sin eventos registrados</span>
+                                    <span class="event-desc">Los eventos reales del partido aparecerán aquí en vivo.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content: Lineups -->
+                    <div class="tab-content" id="tab-lineups">
+                        <div class="lineups-grid">
+                            <div class="lineup-column home-lineup">
+                                <h3 id="home-lineup-title">Destacados Local</h3>
+                                <ul id="featured-home-lineup">
+                                    <!-- Dynamic -->
+                                </ul>
+                            </div>
+                            <div class="lineup-column away-lineup">
+                                <h3 id="away-lineup-title">Destacados Visitante</h3>
+                                <ul id="featured-away-lineup">
+                                    <!-- Dynamic -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Side: Sidebar of Matches & Simulator Controls -->
+            <aside class="sidebar-section">
+                <!-- Matches List Container -->
+                <div class="card glass-card list-matches-card">
+                    <div class="card-header">
+                        <h2><i data-lucide="play-circle"></i> Partidos de Hoy</h2>
+                        <span class="count-badge" id="live-matches-count">0 en vivo</span>
+                    </div>
+                    <div class="matches-list" id="live-matches-list">
+                        <div class="loading-spinner-container">
+                            <div class="spinner"></div>
+                            <p>Consultando agenda de partidos de ESPN...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulation Interactive Control Dock -->
+                <div class="card glass-card control-dock-card">
+                    <div class="card-header">
+                        <h2><i data-lucide="sliders"></i> Panel de Simulación</h2>
+                        <span class="control-status" id="mode-status-badge">Modo Real</span>
+                    </div>
+                    <div class="control-panel-content">
+                        <!-- Mode Selector Trigger Banner -->
+                        <div class="mode-toggle-banner">
+                            <p id="mode-description">Viendo partidos de fútbol del mundo real actualizados en vivo de ESPN.</p>
+                            <button class="btn btn-accent" id="btn-toggle-demo-mode">
+                                <i data-lucide="zap"></i> Cambiar a Modo Simulación Demo
+                            </button>
+                        </div>
+
+                        <!-- Developer console, hidden/disabled unless Demo Mode is active -->
+                        <div id="demo-controls" class="disabled-controls">
+                            <p class="control-intro"><strong>Modo Demo Activo:</strong> Puedes forzar sucesos en el partido simulado para probar el panel:</p>
+                            
+                            <div class="control-row">
+                                <button class="btn btn-primary" id="btn-force-goal-home">
+                                    <i data-lucide="goal"></i> Gol Local
+                                </button>
+                                <button class="btn btn-primary" id="btn-force-goal-away">
+                                    <i data-lucide="goal"></i> Gol Visita
+                                </button>
+                            </div>
+
+                            <div class="control-row">
+                                <button class="btn btn-secondary" id="btn-force-card-home">
+                                    <i data-lucide="alert-triangle"></i> Tarjeta Local
+                                </button>
+                                <button class="btn btn-secondary" id="btn-force-card-away">
+                                    <i data-lucide="alert-triangle"></i> Tarjeta Visita
+                                </button>
+                            </div>
+
+                            <div class="control-row full-width">
+                                <button class="btn btn-accent" id="btn-trigger-event">
+                                    <i data-lucide="dribbble"></i> Generar Suceso Aleatorio
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
